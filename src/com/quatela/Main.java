@@ -12,6 +12,9 @@ import java.util.Properties;
 
 public class Main {
 
+	static String ubuntu = "/home/rquatela/Documents/props.xml";
+	static String windows = "E:/Windows/Users/rquatela/Documents/Java Spot/training/props.xml";
+	
 	public static void main(String[] args) {
 /*		if(args.length == 0) {
 			showUsage();
@@ -25,7 +28,7 @@ public class Main {
 		}
 		
 		showFileLines(fileName);*/
-		Properties props = new Properties();
+/*		Properties props = new Properties();
 		props.setProperty("displayName", "Rob Quatela");
 		props.setProperty("accountNumber", "12344566");
 		
@@ -37,22 +40,31 @@ public class Main {
 		};
 		
 		for(String value : values)
-			System.out.println(value);
+			System.out.println(value);*/
+		
+		Properties defaults = new Properties();
+		defaults.setProperty("position", "1");
+		Properties props = new Properties(defaults);
+		String nextPos = props.getProperty("position");
+		
+		int iPos = Integer.parseInt(nextPos);
+		props.setProperty("position", Integer.toString(++iPos));
+		System.out.println(props.getProperty("position"));
 
 
 	}
 	
 	private static void loadFromXML(Properties props) {
-		try(InputStream in = Files.newInputStream(Paths.get("/home/rqutela/Documents/props.xml"))) {
+		try(InputStream in = Files.newInputStream(Paths.get(windows))) {
 			props.loadFromXML(in);
 		}
 		catch(Exception e) {
-			
+			System.out.println(e.getClass().getSimpleName() + " - " + e.getMessage());
 		}
 	}
 	
 	private static void storeAsXML(Properties props) {
-		try(OutputStream out = Files.newOutputStream(Paths.get("/home/rquatela/Documents/props.xml"))) {
+		try(OutputStream out = Files.newOutputStream(Paths.get(windows))) {
 			props.storeToXML(out, "My Comment");
 		}
 		catch(Exception e) {
@@ -62,7 +74,7 @@ public class Main {
 	
 	private static void writeProperty(Properties props) {
 
-		try(Writer writer = Files.newBufferedWriter(Paths.get("/home/rquatela/Documents/xyz.properties"))) {
+		try(Writer writer = Files.newBufferedWriter(Paths.get(windows))) {
 			props.store(writer, "My comment");
 		}
 		catch(IOException e) {
@@ -71,7 +83,7 @@ public class Main {
 	}
 	
 	private static void readProperty(Properties props) {
-		try(Reader reader = Files.newBufferedReader(Paths.get("/home/rquatela/Documents/xyz.properties"))) {
+		try(Reader reader = Files.newBufferedReader(Paths.get(windows))) {
 			props.load(reader);
 		}
 		catch(IOException e) {
