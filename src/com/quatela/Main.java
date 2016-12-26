@@ -7,6 +7,7 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Properties;
 
@@ -42,16 +43,57 @@ public class Main {
 		for(String value : values)
 			System.out.println(value);*/
 		
-		Properties defaults = new Properties();
+/*		Properties defaults = new Properties();
 		defaults.setProperty("position", "1");
 		Properties props = new Properties(defaults);
 		String nextPos = props.getProperty("position");
 		
 		int iPos = Integer.parseInt(nextPos);
 		props.setProperty("position", Integer.toString(++iPos));
-		System.out.println(props.getProperty("position"));
+		System.out.println(props.getProperty("position"));*/
+		
+		try {
+			Properties defaultProps = new Properties();
+			try(InputStream input = Main.class.getResourceAsStream("MyDefaultValues.xml")) {
+				defaultProps.loadFromXML(input);
+			}
+			Properties userProps = new Properties(defaultProps);
+			loadUserProps(userProps);
+			
+			String welcomeMessage = userProps.getProperty("welcomeMessage");
+			String farewellMessage = userProps.getProperty("farewellMessage");
+			
+			System.out.println(welcomeMessage);
+			System.out.println(farewellMessage);
+			
+			if(userProps.getProperty("isFirstRun").equalsIgnoreCase("Y")) {
+				userProps.setProperty("welcomeMessage", "Welcome back");
+				userProps.setProperty("farewellMessage", "Things will be familiar now");
+				userProps.setProperty("isFirstRun", "N");
+				saveUserProps(userProps);
+			}
+		}
+		catch(IOException e) {
+			System.out.println("Exception <" + e.getClass().getSimpleName() + "> " + e.getMessage());
+		}
 
 
+	}
+	
+	private static Properties loadUserProps(Properties userProps) throws IOException {
+		Path userFile = Paths.get("E:/Windows/Users/rquatela/Documents/Java Spot/training/userValues.xml");
+		if(Files.exists(userFile)) {
+			try(InputStream input = Files.newInputStream(userFile)) {
+				userProps.loadFromXML(input);
+			}
+		}
+		return userProps;
+	}
+	
+	private static void saveUserProps(Properties userProps) throws IOException {
+		try(OutputStream output = Files.newOutputStream(Paths.get("E:/Windows/Users/rquatela/Documents/Java Spot/training/userValues.xml"))) {
+			userProps.storeToXML(output, null);
+		}
 	}
 	
 	private static void loadFromXML(Properties props) {
